@@ -41,8 +41,9 @@ function detailsPanier () {let a=0; let total=0;
             document.querySelectorAll(".cart__item__content__description h2")[i].innerHTML=data[idPosition[i]].name;//vise le seul h2 de [i] (le nom du produit) et le met à jour
             document.querySelectorAll("input.itemQuantity")[i].value=window.localStorage.getItem(Object.keys(localStorage)[i]).split(",")[1] //vise le seul input.quantity de [i]  et le met à jour
             document.querySelectorAll(".cart__item__img img")[i].src=data[idPosition[i]].imageUrl; //vise la seule img de [i] et met à jour
+            document.querySelectorAll(".cart__item__img img")[i].alt=data[idPosition[i]].altTxt//alt
             document.querySelectorAll(".deleteItem")[i].addEventListener("click", function() //button supprimer BUG!
-              {document.querySelectorAll("article.cart__item ")[i].remove();localStorage.removeItem(Object.keys(localStorage)[i]);panierIdArrayf(); idPositionf();detailsPanier()}) 
+              {console.log("produit en position"+i+"eliminé");document.querySelectorAll("article.cart__item ")[i].remove();localStorage.removeItem(Object.keys(localStorage)[i]);panierIdArrayf(); idPositionf();detailsPanier()}) 
             document.querySelectorAll(".itemQuantity")[i].addEventListener("click", function() //met à jour la quantité dans le localStorage en recréant la value de la key interessée et relance detailsPanier pour mettre à jour le  total affiché
               {localStorage.setItem(Object.keys(localStorage)[i],localStorage.getItem(Object.keys(localStorage)[i]).split(",")[0]+","+document.querySelectorAll("input.itemQuantity")[i].value); detailsPanier()})
 
