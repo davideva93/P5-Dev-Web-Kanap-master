@@ -26,17 +26,20 @@ return res.json()
 
 addToCart.addEventListener("click",ajouterAuPanier)
 
-function ajouterAuPanier() {let idCanape = window.location.href.split("=")[1] //pour trouver l'id du produit
+function ajouterAuPanier() 
+    {let idCanape = window.location.href.split("=")[1] //pour trouver l'id du produit
 let colorCanape=document.getElementById("colors").value
 let quantityCanape=document.getElementById("quantity").value
     if(document.getElementById("quantity").value==0) {alert("Il faut choisir une quantité")} //controle quantité
     else if (colorCanape==""){alert("il faut choisir une couleur")}//controle couleur
     //quantité et couleur choisis:
-    else if( window.localStorage.getItem(idCanape+","+colorCanape)== null)   //si le produit n'existe pas dans le localStorage il faut le créer
+    else if( window.localStorage.getItem(idCanape+","+colorCanape)== null)   
+    //si le produit n'existe pas dans le localStorage il faut le créer
         {window.localStorage.setItem(idCanape+","+colorCanape,colorCanape+","+quantityCanape); 
         document.getElementById("quantity").value=0; document.getElementById("colors").value=""}            
-    else if(window.localStorage.getItem(idCanape+","+colorCanape).split(",")[0]==colorCanape)  //si le produit existe déjà et la couleur est la pareille, il faut convertir la quantité presente et la quantité à ajouter en number, faire l'addition et mettre à jour
-        {quantityCanape=parseInt(quantityCanape)+parseInt(window.localStorage.getItem(idCanape+","+colorCanape).split(",")[1]);
+    else if(window.localStorage.getItem(idCanape+","+colorCanape).split(",")[0]==colorCanape) 
+     //si le produit existe déjà et la couleur est la pareille, il faut convertir la quantité presente et la quantité à ajouter en number, faire l'addition et mettre à jour
+        {quantityCanape=parseInt(quantityCanape);
          window.localStorage.setItem(idCanape+","+colorCanape,colorCanape+","+quantityCanape )
          document.getElementById("quantity").value=0; document.getElementById("colors").value=""}
     else{console.log("Erreur ligne 38; rien se passe")}
