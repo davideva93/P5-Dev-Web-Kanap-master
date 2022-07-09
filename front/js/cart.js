@@ -26,13 +26,14 @@ function cloneArticlePanier() {
 
 
 let idArray = []; //array contenant tous les id des produits en vente
-function idArrayf() { for (let i = 0; i < data.length; i++) { idArray.push(data[i]._id) } }
+function idArrayf() { idArray = []; for (let i = 0; i < data.length; i++) { console.log("idarray"); idArray.push(data[i]._id) } }
 
 
 
 let panierIdArray = []; //array contentant tous les id des produits differents achetés
 function panierIdArrayf() {
   panierIdArray = []; for (let i = 0; i < Object.keys(localStorage).length; i++) {
+    console.log("panierid");
     panierIdArray.push(Object.keys(localStorage)[i].split(",")[0])
   }
 }
@@ -40,8 +41,10 @@ function panierIdArrayf() {
 
 let idPosition = [] //array contenant les positions des articles achetés dans le catalogue de vente
 function idPositionf() {
+  idPosition = [];
   for (const value of panierIdArray) {
     for (let i = 0; i < idArray.length; i++) {
+      console.log("idposition");
       if (value == idArray[i]) {
         idPosition.push(i)
       }
@@ -49,37 +52,44 @@ function idPositionf() {
   }
 }
 
+let buttonsSupprimer = document.querySelectorAll(".deleteItem")
+buttonsSupprimer.forEach((buttonSupprimer) => { buttonSupprimer.addEventListener("click", (e) => { localStorage.removeItem(e.path[4].attributes[1].nodeValue + "," + e.path[4].attributes[2].nodeValue); e.path[4].remove(); panierIdArrayf(); idPositionf(); detailsPanier() }) }) //button supprimer BUG!
+
+
+let buttonsQuantity = document.querySelectorAll(".itemQuantity")
+buttonsQuantity.forEach((buttonQuantity) => {
+  buttonQuantity.addEventListener("click", (e) => //met à jour la quantité dans le localStorage en recréant la value de la key interessée et relance detailsPanier pour mettre à jour le  total affiché
+  { localStorage.setItem(e.path[4].attributes[1].nodeValue + "," + e.path[4].attributes[2].nodeValue, e.path[4].attributes[2].nodeValue + "," + buttonQuantity.value); console.log("itemquantiti"); detailsPanier() })
+})
+
 
 function detailsPanier() {
-  let a = 0; let total = 0;
+  let a = 0; let total = 0; if (panierIdArray.length == 0) {
+    document.getElementById("totalPrice").textContent = total;
+    document.querySelector("article.cart__item ") ? document.querySelector("article.cart__item ").remove() : none;
+
+
+  }
 
   for (let i = 0; i < panierIdArray.length; i++) {
-    document.querySelectorAll(".cart__item")[i].dataset.id=panierIdArray[i];
-    document.querySelectorAll(".cart__item")[i].dataset.color=Object.keys(localStorage)[i].split(",")[1];
+    console.log("details");
+    document.querySelectorAll(".cart__item")[i].dataset.id = panierIdArray[i]; //l'id de l'objet n°0 = id objet n°0 dans le panier
+    document.querySelectorAll(".cart__item")[i].dataset.color = Object.keys(localStorage)[i].split(",")[1];
     document.querySelectorAll(".cart__item__content__description h2")[i].innerHTML = data[idPosition[i]].name;//vise le seul h2 de [i] (le nom du produit) et le met à jour
     document.querySelectorAll("input.itemQuantity")[i].value = window.localStorage.getItem(Object.keys(localStorage)[i]).split(",")[1] //vise le seul input.quantity de [i]  et le met à jour
     document.querySelectorAll(".cart__item__img img")[i].src = data[idPosition[i]].imageUrl; //vise la seule img de [i] et met à jour
     document.querySelectorAll(".cart__item__img img")[i].alt = data[idPosition[i]].altTxt//alt
-    document.querySelectorAll(".deleteItem")[i].addEventListener("click", function () //button supprimer BUG!
-    { 
-      console.log("produit en position" + i + "eliminé"); 
-      //document.querySelectorAll("article.cart__item ")[i].remove();
-      this.parentNode.parentNode.parentNode.parentNode.remove();
-      //localStorage.removeItem(Object.keys(localStorage)[i]); 
-      //panierIdArrayf();
-       //idPositionf(); 
-       //detailsPanier() 
-      })
-    document.querySelectorAll(".itemQuantity")[i].addEventListener("click", function () //met à jour la quantité dans le localStorage en recréant la value de la key interessée et relance detailsPanier pour mettre à jour le  total affiché
-    { localStorage.setItem(Object.keys(localStorage)[i], localStorage.getItem(Object.keys(localStorage)[i]).split(",")[0] + "," + document.querySelectorAll("input.itemQuantity")[i].value); detailsPanier() })
 
-    if (i == 0) { //si [i] est 0 on vise les deux <p> (couleur et prix) presents dans le 1er article . Dans ce cas, <p>[0] et <p>[1]
+
+    if (i == 0) {
+      console.log("i=0"); //si [i] est 0 on vise les deux <p> (couleur et prix) presents dans le 1er article . Dans ce cas, <p>[0] et <p>[1]
       document.querySelectorAll(".cart__item__content__description p")[i].innerHTML = Object.keys(localStorage)[i].split(",")[1]; //couleur pris par localStorage
       document.querySelectorAll(".cart__item__content__description p")[i + 1].innerHTML = data[idPosition[i]].price; //prix pris par le back
       total = total + data[idPosition[i]].price * parseInt(document.querySelectorAll("input.itemQuantity")[i].value) //on met à jour le total: prix * quantité
       document.getElementById("totalPrice").textContent = total;
     }//on affiche le total qu'on vient de mettre à jour
-    else { // on vise les deux <p> de l'article [i]. Le pair est la couleur, l'impair est le prix. a est necessaire parce que pour chaque article (et donc chaque [i]) il y a deux <p> a modifier
+    else {
+      console.log("else" + i);// on vise les deux <p> de l'article [i]. Le pair est la couleur, l'impair est le prix. a est necessaire parce que pour chaque article (et donc chaque [i]) il y a deux <p> a modifier
       document.querySelectorAll(".cart__item__content__description p")[i + 1 + a].innerHTML = Object.keys(localStorage)[i].split(",")[1];//i=1..3..5..
       document.querySelectorAll(".cart__item__content__description p")[i + 2 + a].innerHTML = data[idPosition[i]].price;//i=2..4..6..
       total = total + data[idPosition[i]].price * parseInt(document.querySelectorAll("input.itemQuantity")[i].value);//on met à jour le total: prix * quantité
@@ -101,7 +111,14 @@ function goToConfirmation(event) //!!!!!!!!!!!!!
     document.getElementById("lastNameErrorMsg").textContent == "" && document.getElementById("lastName").value != "" &&
     document.getElementById("addressErrorMsg").textContent == "" && document.getElementById("address").value != "" &&
     document.getElementById("emailErrorMsg").textContent == "" && document.getElementById("email").value != "") { window.location.href = "http://127.0.0.1:5500/front/html/confirmation.html" } else { alert("Pour valider est necessaire completer le formulaire") }
-} //formulaire incomplet ou non correct
+}
+
+
+
+
+
+
+//formulaire incomplet ou non correct
 
 const formulaireElements = document.querySelectorAll(".cart__order__form__question input");
 formulaireElements.forEach((formulaireElement) => { //on passe ce qu'on tape a la clavier a les functions concernées
@@ -146,18 +163,3 @@ function emailf(value) {
 
 
 
-
-
-
-//total=total+parseInt(document.querySelectorAll(".cart__item__content__description p")[i+2+a].textContent); console.log(total)
-
-
-//var k=0;
-//let idPanier;
-
-//function getIdPanier() 
-  //      {let nProduitsEnVente=data.length; numberProduitsDifferentsPanier = Object.keys(localStorage).length;
-    //        if(k<numberProduitsDifferentsPanier) // boucle primaire de k fois; k= n produits differents dans le panier
-      //          {k=k+1; for(let i=0; i<nProduitsEnVente; i++) //boucle secondaire; pour chaque k, boucle i fois; i=n produits en vente
-        //            {Object.keys(localStorage)[k-1].includes(data[i]._id)? // on compare l'id du 1er produit dans le panier avec les id des produits en vente
-          //               idPanier=idPanier+","+(data[i]._id)+":"+i:false} ;getIdPanier()} else return} //+i servira ensuite pour recuperer la position de l'id
