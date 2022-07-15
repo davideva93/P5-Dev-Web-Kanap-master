@@ -42,8 +42,8 @@ addToCart.addEventListener("click", controleQuantiteEtCouleur)
 function controleQuantiteEtCouleur() { // s'assure que l'utilisateur a choisi une quantité et une couleur
     let colorCanape = document.getElementById("colors").value
     let quantityCanape = document.getElementById("quantity").value
-    if (quantityCanape == 0) 
-        { alert("Il faut choisir une quantité") } //controle quantité raté
+    if (quantityCanape <1||quantityCanape>100) 
+        { alert("Il faut choisir une quantité (1-100)") } //controle quantité raté
     else if (colorCanape == "") 
         { alert("il faut choisir une couleur") }    //controle couleur raté
     else 
