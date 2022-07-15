@@ -11,14 +11,19 @@ fetch("http://localhost:3000/api/products")
 
   })
 
-let monPanier = JSON.parse(window.localStorage.getItem("KanapPanier")); //localStorage
+let monPanier = JSON.parse(window.localStorage.getItem("KanapPanier")); //monPanier= localStorage
 
 
 cloneArticlePanier() //pour créer x articles dans le panier; x= quantité art. differents
 function cloneArticlePanier() {
-  if (monPanier == null && document.querySelector("article.cart__item ") != null) //si le panier est vide, aucun article doit s'afficher
+   if (monPanier == null && document.querySelector("article.cart__item ") != null)
+  { document.querySelector("article.cart__item ").remove(); document.getElementById("totalPrice").textContent = 0; return}
+  else if (monPanier.length == 0 && document.querySelector("article.cart__item ") != null)//si le panier est vide, aucun article doit s'afficher
     { document.querySelector("article.cart__item ").remove(); document.getElementById("totalPrice").textContent = 0; return}
-  else { console.log("ciao");
+
+     
+    
+  else {
   for (let i = 0; i < monPanier.length - 1; i++) {
     let clone = cart__items.lastElementChild.cloneNode(true);
     cart__items.appendChild(clone);}
@@ -30,11 +35,11 @@ function cloneArticlePanier() {
 
 
 let buttonsSupprimer = document.querySelectorAll(".deleteItem")
-buttonsSupprimer.forEach((buttonSupprimer) => {
-  buttonSupprimer.addEventListener("click", (e) => {
+buttonsSupprimer.forEach((buttonSupprimer) => { //
+  buttonSupprimer.addEventListener("click", (e) => { //logique buttons supprimer
     e.path[4].remove();
-    let idProduitE = (e.path[4].attributes[1].nodeValue); //id du produit eliminé
-    let colorProduitE = (e.path[4].attributes[2].nodeValue);//couleur du produit eliminé
+    let idProduitE = (e.path[4].attributes[1].nodeValue); //id du produit à eliminer
+    let colorProduitE = (e.path[4].attributes[2].nodeValue);//couleur du produit à eliminer
     var stockEliminerArrayFiltred = monPanier.filter(function (q) {
       return q.id != idProduitE || q.color != colorProduitE;//on garde juste les elements qui ne sont pas celui eliminé (filtres id et couleur)
     }
@@ -49,7 +54,7 @@ buttonsSupprimer.forEach((buttonSupprimer) => {
 
 
 let buttonsQuantity = document.querySelectorAll(".itemQuantity")
-buttonsQuantity.forEach((buttonQuantity) => {
+buttonsQuantity.forEach((buttonQuantity) => { //logique buttons quantity
   buttonQuantity.addEventListener("click", (e) => {
     let QuantityInputValue = (buttonQuantity.value);
     let idProduitQ = (e.path[4].attributes[1].nodeValue); //id du produit dont la quantité change
@@ -66,9 +71,9 @@ buttonsQuantity.forEach((buttonQuantity) => {
 
 let idList = []
 
-function detailsPanier() {
+function detailsPanier() { //affichage détails produits dans le panier
   let a = 0; let total = 0; 
-  if(monPanier!=null){ //si le panier existe
+  if(monPanier.length!=0){ //si le panier existe
   for (let i = 0; i < monPanier.length; i++) {
     function dataInfo(data) {
       return data._id == monPanier[i].id;
@@ -76,10 +81,8 @@ function detailsPanier() {
 
     document.querySelectorAll(".cart__item")[i].dataset.id = monPanier[i].id;  //l'id de l'objet n°0 = id objet n°0 dans le panier
     idList.push(monPanier[i].id); 
-    
     document.querySelectorAll(".cart__item")[i].dataset.color = monPanier[i].color;
     document.querySelectorAll("input.itemQuantity")[i].value = monPanier[i].quantity
-
     document.querySelectorAll(".cart__item__content__description h2")[i].innerHTML = data.find(dataInfo).name;//vise le seul h2 de [i] (le nom du produit) et le met à jour
     document.querySelectorAll(".cart__item__img img")[i].src = data.find(dataInfo).imageUrl; //vise la seule img de [i] et met à jour
     document.querySelectorAll(".cart__item__img img")[i].alt = data.find(dataInfo).altTxt//alt
@@ -111,16 +114,28 @@ function detailsPanier() {
 
 
 //formulaire
-document.getElementById("order").addEventListener("click", goToConfirmation)//si le formulaire est valide, submit nous porte a confirmation.html
+document.getElementById("order").addEventListener("click", testFormulaire)//si le formulaire est valide, submit nous porte a confirmation.html
 
-function goToConfirmation(event) //!!!!!!!!!!!!!
-{
+
+function testFormulaire(){ //tous les champs sont bien remplis?
   event.preventDefault();
   if (document.getElementById("cityErrorMsg").textContent == "" && document.getElementById("city").value != "" &&
     document.getElementById("firstNameErrorMsg").textContent == "" && document.getElementById("firstName").value != "" &&
     document.getElementById("lastNameErrorMsg").textContent == "" && document.getElementById("lastName").value != "" &&
     document.getElementById("addressErrorMsg").textContent == "" && document.getElementById("address").value != "" &&
-    document.getElementById("emailErrorMsg").textContent == "" && document.getElementById("email").value != "") {
+    document.getElementById("emailErrorMsg").textContent == "" && document.getElementById("email").value != "")
+    {goToConfirmation()}
+    else {
+      alert("Pour valider est necessaire completer le formulaire")
+    }
+  
+}
+
+
+function goToConfirmation(event) 
+{
+  
+   
 
     const order = {
       contact: {
@@ -147,7 +162,7 @@ function goToConfirmation(event) //!!!!!!!!!!!!!
     .then(function (res) {
       const orderId=res.orderId;
       console.log(res)
-      window.location.href = "http://127.0.0.1:5500/front/html/confirmation.html?orderId="+orderId;
+      window.location.href = "http://127.0.0.1:5501/front/html/confirmation.html?orderId="+orderId;
   
     })
 
@@ -159,10 +174,7 @@ function goToConfirmation(event) //!!!!!!!!!!!!!
 
    
   }
-  else {
-    alert("Pour valider est necessaire completer le formulaire")
-  }
-}
+ 
 
 
 
