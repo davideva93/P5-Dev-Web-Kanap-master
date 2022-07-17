@@ -16,10 +16,13 @@ let monPanier = JSON.parse(window.localStorage.getItem("KanapPanier")); //monPan
 
 cloneArticlePanier() //pour créer x articles dans le panier; x= quantité art. differents
 function cloneArticlePanier() {
-  if (monPanier == null && document.querySelector("article.cart__item ") != null) { document.querySelector("article.cart__item ").remove(); document.getElementById("totalPrice").textContent = 0; return }
-  else if (monPanier.length == 0 && document.querySelector("article.cart__item ") != null)//si le panier est vide, aucun article doit s'afficher
-  { document.querySelector("article.cart__item ").remove(); document.getElementById("totalPrice").textContent = 0; return }
-  else {
+  if (monPanier == null && document.querySelector("article.cart__item ") != null) 
+    { document.querySelector("article.cart__item ").remove();//si le panier est vide, aucun article doit s'afficher
+     document.getElementById("totalPrice").textContent = 0; return }
+  else if (monPanier.length == 0 && document.querySelector("article.cart__item ") != null)
+    { document.querySelector("article.cart__item ").remove();//si le panier est vide, aucun article doit s'afficher
+     document.getElementById("totalPrice").textContent = 0; return }
+  else { //panier local storage existe et n'est pas vide
     for (let i = 0; i < monPanier.length - 1; i++) {
       let clone = cart__items.lastElementChild.cloneNode(true);
       cart__items.appendChild(clone);
@@ -43,7 +46,8 @@ buttonsSupprimer.forEach((buttonSupprimer) => { //
     );
     monPanier = stockEliminerArrayFiltred; //panier mis à jour
     localStorage.setItem("KanapPanier", JSON.stringify(monPanier));
-    if (monPanier.length == 0) { document.getElementById("totalPrice").textContent = 0 } //mise à jour eventuelle du total
+    if (monPanier.length == 0) {
+       document.getElementById("totalPrice").textContent = 0 } //mise à jour eventuelle du total
     detailsPanier()
   })
 })
@@ -56,11 +60,12 @@ buttonsQuantity.forEach((buttonQuantity) => { //logique changement quantité
 
 buttonQuantity.addEventListener("focusout", (e) => { //la quantité tapée à la clavier est acceptable? si oui, on enregistre si non on annule
     if (e.target.value > 100 || e.target.value < 1) {
-      alert("Le nombre de produits identiques commandés doit être compris entre 1 et 100.  "); detailsPanier()
+      alert("Le nombre de produits identiques commandés doit être compris entre 1 et 100.  ");
+       detailsPanier() //controle raté
     }
     else { QAJour(e, buttonQuantity) }
-  })
-buttonQuantity.addEventListener("click", (f) => { QAJour(f, buttonQuantity) }) //si la quantité est changée a la souris, on met a jour
+  })//si la quantité est changée a la souris, on met a jour
+buttonQuantity.addEventListener("click", (f) => { QAJour(f, buttonQuantity) }) 
 })
 
 
@@ -69,8 +74,7 @@ function QAJour(f, buttonQuantity) { //function pour mettre à jour une quantit�
   let colorProduitQ = (f.path[4].attributes[2].nodeValue);//couleur du produit dont la quantité change
   var stockQuantityArrayFiltred = monPanier.filter(function (q) {
     return q.id == idProduitQ && q.color == colorProduitQ;//on trouve le seul element stocké qui match (filtres id et couleur)
-  }
-  );
+  });
   stockQuantityArrayFiltred[0].quantity = (parseInt(buttonQuantity.value)) //quantité de l'article stocké mis à jour
   localStorage.setItem("KanapPanier", JSON.stringify(monPanier));
   detailsPanier()
@@ -83,7 +87,7 @@ function detailsPanier() { //affichage détails produits dans le panier
   let a = 0; let total = 0;
   if (monPanier.length != 0) { //si le panier existe
     for (let i = 0; i < monPanier.length; i++) {
-      function dataInfo(data) {
+      function dataInfo(data) { 
         return data._id == monPanier[i].id;
       }
 
@@ -132,7 +136,8 @@ function testFormulaire() { //tous les champs sont bien remplis?
     document.getElementById("firstNameErrorMsg").textContent == "" && document.getElementById("firstName").value != "" &&
     document.getElementById("lastNameErrorMsg").textContent == "" && document.getElementById("lastName").value != "" &&
     document.getElementById("addressErrorMsg").textContent == "" && document.getElementById("address").value != "" &&
-    document.getElementById("emailErrorMsg").textContent == "" && document.getElementById("email").value != "") { goToConfirmation() }
+    document.getElementById("emailErrorMsg").textContent == "" && document.getElementById("email").value != "") 
+    { goToConfirmation() }
   else {
     alert("Pour valider est necessaire completer le formulaire")
   }

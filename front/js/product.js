@@ -64,7 +64,8 @@ function ajouterAuPanier(colorCanape, quantityCanape) {  //met a jour le localSt
     if (window.localStorage.getItem("KanapPanier") != null) { // si il y a un localStorage kanapPanier, on le met dans monPanier
         monPanier = JSON.parse(window.localStorage.getItem("KanapPanier"));
         monPanier.filter(colorExistCheck).find(idExistCheck) == null ?  // si dans monPanier il y a déjà un produit pareil, on change la quantité, sinon on crée un nouveau produit 
-            createArticle(colorCanape, quantityCanape) : changeQuantité(quantityCanape, colorCanape);
+            createArticle(colorCanape, quantityCanape) : changeQuantité(quantityCanape, colorCanape); 
+            // si il n'y a pas le produit, on le crée
     }
     else { createArticle(colorCanape, quantityCanape) } // si il n'y a pas un localStorage KanapPanier, on le crée 
 }
@@ -72,8 +73,11 @@ function ajouterAuPanier(colorCanape, quantityCanape) {  //met a jour le localSt
 
 
 function createArticle(colorCanape, quantityCanape) //crée un nouveau article
-    { let article = { id: productId, color: colorCanape, quantity: quantityCanape }; monPanier.push(article); localStorage.setItem("KanapPanier", JSON.stringify(monPanier)); document.getElementById("quantity").value = 0; document.getElementById("colors").value = "" }
-//si le produit existe déjà et la couleur est la pareille, on met à jour la quantité
+    { let article = { id: productId, color: colorCanape, quantity: quantityCanape };
+    monPanier.push(article);
+    localStorage.setItem("KanapPanier", JSON.stringify(monPanier)); 
+    document.getElementById("quantity").value = 0;
+    document.getElementById("colors").value = "" }
 
 
 function changeQuantité(quantityCanape, colorCanape) { //met à jour la quantité
@@ -83,13 +87,15 @@ function changeQuantité(quantityCanape, colorCanape) { //met à jour la quantit
     }
     function colorExistCheck(monPanier) {
         return monPanier.color === colorCanape;
+
     }let quantiteTotDemandee= parseInt(monPanier.filter(colorExistCheck).find(idExistCheck).quantity) + parseInt(quantityCanape);
-    if(quantiteTotDemandee>100)
+    if(quantiteTotDemandee>100) //quantité tot >100: erreur
         {alert("Malheureusement, commander plus que 100 produits identiques est impossible. Veuillez nous excuser pour la gêne occasionnée ") }
-    else{
-    
+    else{ //mise à jour quantité
     monPanier.filter(colorExistCheck).find(idExistCheck).quantity = quantiteTotDemandee;
-    localStorage.setItem("KanapPanier", JSON.stringify(monPanier)); document.getElementById("quantity").value = 0; document.getElementById("colors").value = ""
+    localStorage.setItem("KanapPanier", JSON.stringify(monPanier)); 
+    document.getElementById("quantity").value = 0; 
+    document.getElementById("colors").value = ""
 }}
 
 
