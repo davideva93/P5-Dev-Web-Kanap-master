@@ -54,16 +54,12 @@ function controleQuantiteEtCouleur() { // s'assure que l'utilisateur a choisi un
 
 
 function ajouterAuPanier(colorCanape, quantityCanape) {  //met a jour le localStorage
-    function idExistCheck(monPanier) {
-        return monPanier.id === productId;
-    }
-    function colorExistCheck(monPanier) {
-        return monPanier.color === colorCanape;
-    }
+  
 
     if (window.localStorage.getItem("KanapPanier") != null) { // si il y a un localStorage kanapPanier, on le met dans monPanier
         monPanier = JSON.parse(window.localStorage.getItem("KanapPanier"));
-        monPanier.filter(colorExistCheck).find(idExistCheck) == null ?  // si dans monPanier il y a déjà un produit pareil, on change la quantité, sinon on crée un nouveau produit 
+        monPanier.filter((item)=>item.color===colorCanape).find((item)=>item.id==productId) == null ?  
+        // si dans monPanier il y a déjà un produit pareil, on change la quantité, sinon on crée un nouveau produit 
             createArticle(colorCanape, quantityCanape) : changeQuantité(quantityCanape, colorCanape); 
             // si il n'y a pas le produit, on le crée
     }
@@ -82,17 +78,13 @@ function createArticle(colorCanape, quantityCanape) //crée un nouveau article
 
 function changeQuantité(quantityCanape, colorCanape) { //met à jour la quantité
     
-    function idExistCheck(monPanier) {
-        return monPanier.id === productId;
-    }
-    function colorExistCheck(monPanier) {
-        return monPanier.color === colorCanape;
+    
 
-    }let quantiteTotDemandee= parseInt(monPanier.filter(colorExistCheck).find(idExistCheck).quantity) + parseInt(quantityCanape);
+    let quantiteTotDemandee= parseInt(monPanier.filter((item)=>item.color===colorCanape).find((item)=>item.id==productId).quantity) + parseInt(quantityCanape);
     if(quantiteTotDemandee>100) //quantité tot >100: erreur
         {alert("Malheureusement, commander plus que 100 produits identiques est impossible. Veuillez nous excuser pour la gêne occasionnée ") }
     else{ //mise à jour quantité
-    monPanier.filter(colorExistCheck).find(idExistCheck).quantity = quantiteTotDemandee;
+    monPanier.filter((item)=>item.color===colorCanape).find((item)=>item.id==productId).quantity = quantiteTotDemandee;
     localStorage.setItem("KanapPanier", JSON.stringify(monPanier)); 
     document.getElementById("quantity").value = 0; 
     document.getElementById("colors").value = ""
